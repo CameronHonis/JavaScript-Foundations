@@ -3,9 +3,10 @@
 // 🏡 Task 1: Variables
 /* Create variables for principal, interest rate, and years. Assign them the values 200000, 0.05, and 30 respectively. Create another value called name and give it the value of your own name.
 */
-
-
-
+let principal = 200000;
+let interestRate = .05;
+let years = 30;
+let name = 'Cameron';
 
 
 // 🏡 Task 1.5: Simple Math
@@ -14,8 +15,8 @@
 (1) Create a variable called `monthlyInterestRate` and give it the value of interest rate divided by 12. 
 (2) Create another variable called `periods` and give it the value of years*12.
 */
-
-
+let monthlyInterestRate = interestRate/12;
+let periods = years*12;
 
 
 // 🏡 Task 2: Harder Math
@@ -35,8 +36,20 @@ Hint #2: you'll need to use the `math` object for parts of this calculation!
 
 When your math is correct, monthlyRate will equal 1073.64
 */
-
-
+function mortgageCalculator(P,I,N,C){
+    P = (P) ? P:principal;
+    I = (I) ? I/12:monthlyInterestRate;
+    C = (C) ? C:700;
+    if (C > 740){
+        I *= 1.05
+    }else if (C < 660){
+        I *= .95
+    }
+    N = (N) ? N*12:periods;
+    return P*I*Math.pow(1+I,N)/(Math.pow(1+I,N)-1);
+    // return principal*monthlyInterestRate*Math.pow(1+monthlyInterestRate,periods)/(Math.pow(1+monthlyInterestRate,periods)-1);
+}
+console.log(mortgageCalculator());
 
 
 // 🏡 Task 3: Function
@@ -44,7 +57,7 @@ When your math is correct, monthlyRate will equal 1073.64
 
 If your name is `Oscar` mortgageCalculator() should return "Oscar, your monthly rate is 1073.64"
 */
-
+console.log(`${name}, your monthly mortgage is ${mortgageCalculator()}`);
 
 
 
@@ -55,8 +68,7 @@ If your name is `Oscar` mortgageCalculator() should return "Oscar, your monthly 
 For example,
 mortgageCalculator(200000, 0.05, 30); <-- should return 1,073.64
 */
-
-
+console.log(mortgageCalculator(200000, .05, 30));
 
 
 
@@ -67,7 +79,6 @@ Then, add control flow within your function such that IF creditScore is above 74
 
 Hint: To drop an interest rate by 5% you can take monthlyRate and multiply it by 0.95. Similarly, to increase an interest rate by 5% you'd do monthlyRate * 1.05. 
 */
-
 
 
 
@@ -86,7 +97,27 @@ For example, variableInterestRate(200000, 0.04, 30) should console.log:
 "{Name}, with an interest rate of 0.055, your monthly rate is $1136"
 "{Name}, with an interest rate of 0.06, your monthly rate is $1199"
 */
-
+console.log('\n');
+function variableInterestRate(P,I,N,C){
+    P = (P)? P:principal
+    I = (I)? I:interestRate;
+    N = (N)? N*12:periods;
+    C = (C)? C:700;
+    if (C > 740){
+        I *= 1.05;
+    }else if (C < 660){
+        I *= .95;
+    }
+    let loopTimes = 9;
+    for (let i = -Math.floor((loopTimes-1)/2); i <= Math.floor((loopTimes-1)/2); i++){
+        // let iIAnnual = I*Math.pow(1+.05*Math.sign(i),Math.abs(i));
+        let iIAnnual = I + .005*i;
+        let iIMonthly = iIAnnual/12;
+        let monthlyRate = P*iIMonthly*Math.pow(1+iIMonthly,N)/(Math.pow(1+iIMonthly,N)-1);
+        console.log(`${name}, with an interest rate of ${iIAnnual}, your monthly rate is $${Math.round(monthlyRate)}`);
+    }
+}
+variableInterestRate(200000, .04, 30);
 
 
 
@@ -102,5 +133,36 @@ For example, variableInterestRate(200000, 0.04, 30) should console.log:
 
 /* 🏡 Explore using `window.prompt()` to allow a user to input parameters in the browser */
 
-
 /* 🏡  Refactor your `variableInterestRate()` function to accept an array of interest rates (make sure to copy and paste as to not lose your work!) */
+console.log('\n--------Stretch---------');
+function variableInterestRateArray(P,I,N,C){
+    P = (P)? P:principal;
+    N = (N)? N*12:periods;
+    C = (C)? C:700;
+    for (let v of I){
+        if (C > 740){
+            v *= 1.05;
+        } else if (C < 660){
+            v *= .95;
+        }
+        let vMonthly = v/12;
+        let monthlyRate = P*vMonthly*Math.pow(1+vMonthly,N)/(Math.pow(1+vMonthly,N)-1);
+        console.log(`${name}, with an interest rate of ${v}, your monthly rate is $${Math.round(monthlyRate)}`)
+    }
+}
+let interestArray = [];
+while (true){
+    let interest = prompt('Interest Rate (Enter nothing or click "Cancel" to finish prompt)');
+    if (interest != null && interest != ''){
+        interestArray.push(Number(interest));
+        let s = String(interestArray[0]);
+        for (ii = 1; ii < interestArray.length; ii++){
+            s = s+', '+String(interestArray[ii]);
+        }
+        console.log(s);
+    } else {
+        console.log(`got interest rates`);
+        variableInterestRateArray(200000,interestArray,30);
+        break
+    }
+}
